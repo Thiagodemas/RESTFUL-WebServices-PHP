@@ -2,11 +2,19 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
+
+    private $product;
+    public function __construct(Product $product)
+    {
+        $this->product = $product;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +22,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return response()->json(['success' => 'index']);
+        $products = $this->product->all();
+        return response()->json(['data' => $products]);
     }
 
     public function store(Request $request)
