@@ -55,7 +55,7 @@ class ProductController extends Controller
     public function show($id)
     {
         if (!$product = $this->product->find($id))
-            return response()->json(['error' => 'not_found']);
+            return response()->json(['error' => 'product_not_found']);
 
         return response()->json(['data' => $product]);
     }
@@ -70,7 +70,24 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+        $validate = validator($data, $this->product->rules($id));
+
+        if ($validate->fails()){
+            $message = $validate->messages();
+
+            return response()->json(['validade.error' => $message]);
+        }
+
+        if (!$product = $this->product->find($id))
+            return response()->json(['error' => 'product_not_found']);
+
+        if (!$update = $product->update($data))
+            return response()->json(['error' => 'product_not_update', 500]);
+
+        return response()->json(['response' => $update]);
+
+
     }
 
     /**
