@@ -15,4 +15,18 @@ class Product extends Model
             'description'   => 'required|min:3|max:1500'
         ];
     }
+
+    public function rulesSearch()
+    {
+        return [
+            'key-search'    => 'required',
+        ];
+    }
+
+    public function search($data, $total_page)
+    {
+        return $this->where('name', $data['key-search'])
+                        ->orWhere('description', 'LIKE', "%{$data['key-search']}%")
+                        ->paginate($total_page);
+    }
 }

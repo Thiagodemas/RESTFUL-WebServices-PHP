@@ -10,6 +10,7 @@ class ProductController extends Controller
 {
 
     private $product;
+    private $total_page = 5;
     public function __construct(Product $product)
     {
         $this->product = $product;
@@ -22,7 +23,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = $this->product->all();
+        $products = $this->product->paginate($this->total_page);
         return response()->json(['data' => $products]);
     }
 
@@ -106,6 +107,24 @@ class ProductController extends Controller
 
         return response()->json(['response' => $destroy]);
 
+
+    }
+
+    public function search(Request $request)
+    {
+        $data = $request->all();
+
+        $validate = validator($data, $this->product->rulesSearch());
+
+        if ($validate->fails()){
+            $message = $validate->messages();
+
+            return response()->json(['validade.error' => $message]);
+        }
+
+        $products = $this->product->search($data, $this->total_page);
+
+        return response()->json(['data' => $products]);
 
     }
 }
